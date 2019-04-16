@@ -11,9 +11,10 @@
         android:layout_width="190dp"
         android:layout_height="35dp"
         android:layout_marginTop="15dp"
+        android:layout_marginEnd="8dp"
         android:background="@color/colorAccent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="186dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Spinner
         android:id="@+id/spinnerAllianceColor"
@@ -166,6 +167,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="8dp"
+        android:onClick="writeConfigurationFile"
         android:text="@string/full_send_text"
         android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
