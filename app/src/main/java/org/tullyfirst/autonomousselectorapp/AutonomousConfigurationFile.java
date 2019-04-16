@@ -39,6 +39,19 @@ public class AutonomousConfigurationFile {
         BLUE
     }
 
+    public enum MatchNumber {
+        PRACTICE,
+        ONE,
+        TWO,
+        THREE,
+        FOUR,
+        FIVE,
+        SIX,
+        SEVEN,
+        EIGHT,
+        NINE
+    }
+
     //*********************************************************************************************
     //          PRIVATE DATA FIELDS
     //
@@ -52,7 +65,7 @@ public class AutonomousConfigurationFile {
     private boolean claimDepot = true;
     private ParkLocation parkLocation = ParkLocation.OUR_CRATER;
     private AllianceColor allianceColor = AllianceColor.RED;
-    private String matchNumber = "Practice";
+    private MatchNumber matchNumber = MatchNumber.PRACTICE;
     private String folderPath = "/sdcard/FTC8863/";
     private String filename = "autonomousConfigurationFile.txt";
 
@@ -65,7 +78,7 @@ public class AutonomousConfigurationFile {
 
     public void setDelay(double delay) {
         if (delay > 30) {
-            delay = 30;
+            delay = 0;
         }
         this.delay = delay;
     }
@@ -114,11 +127,11 @@ public class AutonomousConfigurationFile {
         this.allianceColor = allianceColor;
     }
 
-    public String getMatchNumber() {
+    public MatchNumber getMatchNumber() {
         return matchNumber;
     }
 
-    public void setMatchNumber(String matchNumber) {
+    public void setMatchNumber(MatchNumber matchNumber) {
         this.matchNumber = matchNumber;
     }
 
@@ -250,7 +263,39 @@ public class AutonomousConfigurationFile {
                                 break;
                         }
                     case "matchNumber":
-                        matchNumber = scanner.next();
+                        value = scanner.next();
+                        switch (value) {
+                            case "PRACTICE":
+                                matchNumber = matchNumber.PRACTICE;
+                                break;
+                            case "ONE":
+                                matchNumber = matchNumber.ONE;
+                                break;
+                            case "TWO":
+                                matchNumber = matchNumber.TWO;
+                                break;
+                            case "THREE":
+                                matchNumber = matchNumber.THREE;
+                                break;
+                            case "FOUR":
+                                matchNumber = matchNumber.FOUR;
+                                break;
+                            case "FIVE":
+                                matchNumber = matchNumber.FIVE;
+                                break;
+                            case "SIX":
+                                matchNumber = matchNumber.SIX;
+                                break;
+                            case "SEVEN":
+                                matchNumber = matchNumber.SEVEN;
+                                break;
+                            case "EIGHT":
+                                matchNumber = matchNumber.EIGHT;
+                                break;
+                            case "NINE":
+                                matchNumber = matchNumber.NINE;
+                                break;
+                        }
                         break;
                     case "END":
                         break;
