@@ -197,6 +197,10 @@ public class SelectionScreen extends AppCompatActivity implements AdapterView.On
         // Delay Number Entry
         //*****************************************************************************************
 
+        // all of the code below runs at init time to setup the app user interface
+        // the user has not even had a chance to change the delay value yet so this is on the wrong
+        // place. It needs to be when the user has entered a delay value.
+
         EditText delayEditText = (EditText) findViewById(R.id.editDelayValue);
         double delay = Double.parseDouble(delayEditText.getText().toString().trim());
 
@@ -218,55 +222,95 @@ public class SelectionScreen extends AppCompatActivity implements AdapterView.On
     }
 
     /**
-     * This is the handler for the full send button
+     * This is the handler for the full send button getting clicked.
+     *
      * @param view
      */
     @Override
     public void onClick(View view) {
-        if (isWriteStoragePermissionGranted()) {
-            writeConfigFile();
+
+        // the switch is not really needed now since there is only one button. But it shows how you
+        // would handle multiple buttons. Just use a case for the id on each.
+        switch (view.getId()) {
+            case R.id.buttonFullSend:
+                // when the full send button is clicked check the value of the delay
+                EditText delayEditText = (EditText) findViewById(R.id.editDelayValue);
+                double delay = Double.parseDouble(delayEditText.getText().toString().trim());
+
+                // delay can't be bigger than 30 seconds. If it is set it back to 0
+                if (delay > 30) {
+                    delay = 0;
+                    delayEditText.setText(String.valueOf(delay));
+                    // show a toast to warn the user that the value has been changed - you can do it Jared!
+
+                }
+
+                // now set the delay in the config file object - you can do it Jared!
+
+                // do we have write permissions to the config file? If not the method will ask for permission.
+                if (isWriteStoragePermissionGranted()) {
+                    // yes so write it
+                    writeConfigFile();
+                }
+                break;
         }
-        // if permission was not available immediately the user has been asked to grant it
+
     }
 
+    // codes for read and write permissions - the number is not important. It just has to be something.
     private static final int READ = 1;
     private static final int WRITE = 2;
 
-    public  boolean isReadStoragePermissionGranted() {
+    /**
+     * Check if we have read permissions to external storage area. If not ask the user to allow us to
+     * read external storage.
+     *
+     * @return
+     */
+    public boolean isReadStoragePermissionGranted() {
         boolean permissionGranted = false;
 
+        // if android version is less than 23 there are no read permissions needed
         if (Build.VERSION.SDK_INT >= 23) {
+            // versions 23 and up require you to get permission
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 permissionGranted = true;
             } else {
-                // this request create a dialog box that the user has to answer to give permission.
+                // We do not have permission. So make a request to the user for permission.
+                // This request creates a dialog box that the user has to answer to give permission.
                 // The answer is asynchronous. In other words this call return immediately and does not wait for an answer.
                 // When the answer does come, it uses a callback onRequestPermissionsResult() to provide the answer.
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, READ);
                 permissionGranted = false;
             }
-        }
-        else { //permission is automatically granted on sdk<23 upon installation
+        } else { //permission is automatically granted on sdk<23 upon installation
             permissionGranted = true;
         }
         return permissionGranted;
     }
 
-    public  boolean isWriteStoragePermissionGranted() {
+    /**
+     * Check if we have write permissions to external storage. If not ask the user to allow us to
+     * write to external storage.
+     *
+     * @return
+     */
+    public boolean isWriteStoragePermissionGranted() {
         boolean permissionGranted = false;
-
+        // if android version is less than 23 there are no read permissions needed
         if (Build.VERSION.SDK_INT >= 23) {
+            // versions 23 and up require you to get permission
             if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 permissionGranted = true;
             } else {
-                // this request create a dialog box that the user has to answer to give permission.
+                // We do not have permission. So make a request to the user for permission.
+                // This request creates a dialog box that the user has to answer to give permission.
                 // The answer is asynchronous. In other words this call return immediately and does not wait for an answer.
                 // When the answer does come, it uses a callback onRequestPermissionsResult() to provide the answer.
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE);
                 permissionGranted = false;
             }
-        }
-        else { //permission is automatically granted on sdk<23 upon installation
+        } else { //permission is automatically granted on sdk<23 upon installation
             permissionGranted = true;
         }
         return permissionGranted;
@@ -274,7 +318,8 @@ public class SelectionScreen extends AppCompatActivity implements AdapterView.On
 
     /**
      * This method is called when the user answers whether to give the app permission to read or write
-     * to an external file.
+     * to an external file. If we get permission we write the config file.
+     *
      * @param requestCode
      * @param permissions
      * @param grantResults
@@ -284,31 +329,38 @@ public class SelectionScreen extends AppCompatActivity implements AdapterView.On
         //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case WRITE:
-                if(grantResults.length > 0 && grantResults[0]== PackageManager.PERMISSION_GRANTED){
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //resume tasks needing this permission
                     writeConfigFile();
-                }else{
-                    // do something to handle write permissions denied
-                    terminateApp();
+                } else {
+                    // do something to handle write permissions denied - or maybe do nothing
                 }
                 break;
 
+            // this case is just a placeholder for now. We don't actually read anything at this
+            // time
             case READ:
-                if(grantResults.length > 0 && grantResults[0]== PackageManager.PERMISSION_GRANTED){
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // you got permission to read. do something with it
-                }else{
+                } else {
                     // do something to handle read permissions denied
                 }
                 break;
         }
     }
 
+    /**
+     * Write the config file and show a message that it was done.
+     */
     private void writeConfigFile() {
         autonomousConfigurationFile.writeConfigurationFile();
         Toast writeSuccessToast = Toast.makeText(this, "Wrote config file", Toast.LENGTH_SHORT);
         writeSuccessToast.show();
     }
 
+    /**
+     * terminate the app
+     */
     private void terminateApp() {
         Toast closeToast = Toast.makeText(this, "Closing app ...", Toast.LENGTH_SHORT);
         closeToast.show();
@@ -324,7 +376,8 @@ public class SelectionScreen extends AppCompatActivity implements AdapterView.On
     }
 
     /**
-     * This is the handler for the spinner selection
+     * This is the handler for a spinner selection
+     *
      * @param parent
      * @param view
      * @param position
@@ -333,7 +386,8 @@ public class SelectionScreen extends AppCompatActivity implements AdapterView.On
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String itemSelected = "nothing";
-        // On selecting a spinner item
+        // On selecting a spinner item figure out which spinner was selected by getting the id and
+        // doing a switch on it.
         switch (parent.getId()) {
             case R.id.spinnerHangPosition:
                 itemSelected = parent.getItemAtPosition(position).toString();
@@ -433,13 +487,7 @@ public class SelectionScreen extends AppCompatActivity implements AdapterView.On
                         break;
                 }
                 break;
-
-
-
-
         }
-
-
     }
 
     @Override
