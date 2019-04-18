@@ -47,7 +47,8 @@ public class SelectionScreen extends AppCompatActivity implements AdapterView.On
         hangingChoices.add("");
         hangingChoices.add("Crater Side");
         hangingChoices.add("Depot Side");
-        hangingChoices.add("Not Hanging");
+        hangingChoices.add("Not Hanging CRATER");
+        hangingChoices.add("Not Hanging DEPOT");
 
         // Creating adapter for spinner
         ArrayAdapter<String> dataAdapterHangingSpinner = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, hangingChoices);
@@ -201,17 +202,6 @@ public class SelectionScreen extends AppCompatActivity implements AdapterView.On
         // the user has not even had a chance to change the delay value yet so this is on the wrong
         // place. It needs to be when the user has entered a delay value.
 
-        EditText delayEditText = (EditText) findViewById(R.id.editDelayValue);
-        double delay = Double.parseDouble(delayEditText.getText().toString().trim());
-
-        if (delay > 30) {
-            delay = 0;
-
-            // Toast myToast = Toast.makeText(this, message, duration);
-            Toast delayValue = Toast.makeText(this, "Maximum Value Exeeded (Max: 30)", Toast.LENGTH_SHORT);
-
-            delayValue.show();
-        }
 
         //*****************************************************************************************
         // Full send Button - setup a listener for button clicks
@@ -241,11 +231,15 @@ public class SelectionScreen extends AppCompatActivity implements AdapterView.On
                 if (delay > 30) {
                     delay = 0;
                     delayEditText.setText(String.valueOf(delay));
+                    Toast toastDelayValue = Toast.makeText(this, "Max Value Exceeded (Max: 30)", Toast.LENGTH_SHORT);
+                    toastDelayValue.show();
                     // show a toast to warn the user that the value has been changed - you can do it Jared!
+
 
                 }
 
                 // now set the delay in the config file object - you can do it Jared!
+                autonomousConfigurationFile.setDelay(delay);
 
                 // do we have write permissions to the config file? If not the method will ask for permission.
                 if (isWriteStoragePermissionGranted()) {
@@ -398,8 +392,11 @@ public class SelectionScreen extends AppCompatActivity implements AdapterView.On
                     case "Depot Side":
                         autonomousConfigurationFile.setHangLocation(AutonomousConfigurationFile.HangLocation.DEPOT_SIDE);
                         break;
-                    case "Not Hanging":
-                        autonomousConfigurationFile.setHangLocation(AutonomousConfigurationFile.HangLocation.DONT_HANG);
+                    case "Not Hanging CRATER":
+                        autonomousConfigurationFile.setHangLocation(AutonomousConfigurationFile.HangLocation.DONT_HANG_CRATER);
+                        break;
+                    case "Not Hanging DEPOT":
+                        autonomousConfigurationFile.setHangLocation(AutonomousConfigurationFile.HangLocation.DONT_HANG_DEPOT);
                         break;
                 }
                 break;

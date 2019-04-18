@@ -18,7 +18,8 @@ public class AutonomousConfigurationFile {
     public enum HangLocation {
         CRATER_SIDE,
         DEPOT_SIDE,
-        DONT_HANG
+        DONT_HANG_CRATER,
+        DONT_HANG_DEPOT
     }
 
     public enum Sample {
@@ -60,7 +61,7 @@ public class AutonomousConfigurationFile {
     //*********************************************************************************************
 
     private double delay = 0;
-    private HangLocation hangLocation = HangLocation.DONT_HANG;
+    private HangLocation hangLocation = HangLocation.DONT_HANG_CRATER;
     private Sample sample = Sample.NO_SAMPLE;
     private boolean claimDepot = true;
     private ParkLocation parkLocation = ParkLocation.OUR_CRATER;
@@ -174,7 +175,7 @@ public class AutonomousConfigurationFile {
             fileWriter.write("claimDepot " + claimDepot + System.lineSeparator());
             fileWriter.write("parkLocation " + parkLocation.toString() + System.lineSeparator());
             fileWriter.write("allianceColor " + allianceColor.toString() + System.lineSeparator());
-            fileWriter.write("matchNumber " + matchNumber + System.lineSeparator());
+            fileWriter.write("matchNumber " + matchNumber.toString() + System.lineSeparator());
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -210,8 +211,11 @@ public class AutonomousConfigurationFile {
                             case "DEPOT_SIDE":
                                 hangLocation = HangLocation.DEPOT_SIDE;
                                 break;
-                            case "DONT_HANG":
-                                hangLocation = HangLocation.DONT_HANG;
+                            case "DONT_HANG_CRATER":
+                                hangLocation = HangLocation.DONT_HANG_CRATER;
+                                break;
+                            case "DONT_HANG_DEPOT":
+                                hangLocation = HangLocation.DONT_HANG_DEPOT;
                                 break;
                         }
                         break;
